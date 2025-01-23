@@ -20,6 +20,8 @@ const app = () => {
 		articlePage();
 		uiPage();
 		document.body.classList.add('body--loaded');
+
+		console.log('holla');
 	});
 };
 

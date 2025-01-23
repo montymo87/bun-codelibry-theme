@@ -1,20 +1,21 @@
 /**
  * Development script for bundling and serving a web application.
  * This script sets up a development environment using bun-bundler,
- * watches for file changes, processes images, builds sprites,
+ * watches for file changes, builds sprites,
  * and starts a local development server.
  */
 
 import path from 'path';
+import fse from 'fs-extra';
 import { Bundler } from 'bun-bundler';
-import { SpriteBuilder, Server, ImageProcessor } from 'bun-bundler/modules';
+import { SpriteBuilder } from 'bun-bundler/modules';
+import browserSync from 'browser-sync';
 
 const bundler = new Bundler();
 const spriteBuilder = new SpriteBuilder();
-const server = new Server();
-const imgProcessor = new ImageProcessor();
 
-const dist = path.resolve('./dist');
+const root = path.resolve('./');
+const dist = path.resolve('./dist'); // Папка для разработки
 const src = path.resolve('./src');
 const debugMode = false;
 
@@ -27,31 +28,41 @@ const dev = () => {
 		js: [`${src}/js/app.js`],
 		staticFolders: [`${src}/images/`, `${src}/fonts/`, `${src}/static/`],
 		dist,
-		htmlDist: dist,
+		// htmlDist: dist,
 		cssDist: `${dist}/css/`,
 		assembleStyles: `${dist}/css/app.css`,
 		jsDist: `${dist}/js/`,
 		onStart: () => {
-			server.startServer({
-				open: true,
-				debug: debugMode,
-				port: 8080,
-				root: dist,
+			browserSync.init({
+				proxy: 'http://woocommerce/', // Прокси-сервер
+				port: 3000, // Локальный порт
+				// reloadDebounce: 500,
+				files: [
+					`${root}/**/*.php`,
+					`${src}/**/*.js`,
+					`${src}/**/*.scss`,
+					`!${root}/node_modules/**/*`,
+					`!${dist}/**/*`,
+				],
+				// files: [`${src}/**/*.js`, `${src}/**/*.scss`],
+				open: true, // Автооткрытие в браузере
+				notify: false, // Отключение уведомлений
+				ghostMode: false, // Синхронизация действий между устройствами
+				// reloadOnRestart: true, // Перезагрузка при перезапуске
 			});
 		},
-		onBuildComplete: () => {
-			imgProcessor.process({
-				debug: debugMode,
-				root: `${dist}/images/`,
-			});
+		onBuildComplete: async () => {
+			console.log('Build complete. Building sprites...');
+
+			// Сборка спрайтов
 			spriteBuilder.build({
 				debug: debugMode,
 				htmlDir: dist,
 				dist: `${dist}/images/sprite/sprite.svg`,
 			});
 		},
-		onCriticalError: () => {
-			server.stopServer();
+		onCriticalError: (error) => {
+			console.error('Critical error occurred:', error);
 		},
 	});
 };
