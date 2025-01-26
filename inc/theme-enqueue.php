@@ -35,18 +35,6 @@ function codelibry_enqueue()
 
 	/* JavaScript */
 
-	// GSAP: https://gsap.com
-	wp_enqueue_script('gsap', "{$LIB}/gsap.js", array(), '1.0.0', true);
-
-	// GSAP Scroll Trigger (GSAP Plugin): https://gsap.com/docs/v3/Plugins/ScrollTrigger
-	wp_enqueue_script('scroll-trigger', "{$LIB}/scroll-trigger.js", array('gsap'), '1.0.0', true);
-
-	// Lenis Smooth Scroll: https://github.com/darkroomengineering/lenis
-	//wp_enqueue_script( 'lenis', "{$LIB}/lenis.js", array(), '1.0.0', true );
-
-	// Swiper Slider: https://swiperjs.com/get-started
-	wp_enqueue_script('swiper', "{$LIB}/swiper.js", array(), '1.0.0', true);
-
 	// Lottie Player: https://lottiefiles.github.io/lottie-player/usage.html
 	//wp_enqueue_script( 'lottie-player', "{$LIB}/lottie-player.js", array(), '1.0.0', true );
 
